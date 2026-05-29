@@ -249,10 +249,30 @@ const audio=new Audio('wedding-song.mp3');
 audio.loop=true;
 let musicOn=false;
 function toggleMusic(){
-  if(musicOn){audio.pause();document.getElementById('music-btn').textContent='Ἳ5';}
+  if(musicOn){audio.pause();document.getElementById('music-btn').textContent='🎵';}
   else{audio.play().catch(function(){});document.getElementById('music-btn').textContent='⏸';}
   musicOn=!musicOn;
 }
+// Auto-play on page load; fallback to first user interaction if browser blocks it
+window.addEventListener('load', function() {
+  audio.play().then(function() {
+    musicOn = true;
+    document.getElementById('music-btn').textContent = '⏸';
+  }).catch(function() {
+    function startOnInteraction() {
+      audio.play().then(function() {
+        musicOn = true;
+        document.getElementById('music-btn').textContent = '⏸';
+      }).catch(function(){});
+      document.removeEventListener('click', startOnInteraction);
+      document.removeEventListener('keydown', startOnInteraction);
+      document.removeEventListener('touchstart', startOnInteraction);
+    }
+    document.addEventListener('click', startOnInteraction);
+    document.addEventListener('keydown', startOnInteraction);
+    document.addEventListener('touchstart', startOnInteraction);
+  });
+});
 </script>
 </body>
 </html>
